@@ -172,7 +172,7 @@ namespace GEX
 			std::unique_ptr<Actor> enemy(new Actor(spawnPoint.type, textures_));
 			enemy->setPosition(spawnPoint.x, spawnPoint.y);
 			enemy->setVelocity(0.f, -scrollSpeed_);
-			enemy->rotate(180);
+			//enemy->rotate(180);
 			sceneLayers_[UpperAir]->attachChild(std::move(enemy));
 			enemySpawnPoints_.pop_back();
 
@@ -268,14 +268,14 @@ namespace GEX
 
 		for (auto collindingPair : collisionPairs)
 		{
-			if (matchesCategories(collindingPair, Category::Type::PlayerAircraft, Category::Type::EnemyAircraft))
+			if (matchesCategories(collindingPair, Category::Type::Hero, Category::Type::Zombie))
 			{
-				auto& player = static_cast<Aircraft&>(*collindingPair.first);
-				auto& enemy	 = static_cast<Aircraft&>(*collindingPair.second);
-				player.damage(enemy.getHitpoints());
-				enemy.destroy();
+				auto& player = static_cast<Actor&>(*collindingPair.first);
+				auto& enemy	 = static_cast<Actor&>(*collindingPair.second);
+				player.damage(enemy.attackPoints());
+				enemy.damage(player.attackPoints());
 			}
-			else if (matchesCategories(collindingPair, Category::Type::PlayerAircraft, Category::Type::Pickup))
+			/*else if (matchesCategories(collindingPair, Category::Type::PlayerAircraft, Category::Type::Pickup))
 			{
 				auto& player = static_cast<Aircraft&>(*collindingPair.first);
 				auto& pickup = static_cast<Pickup&>(*collindingPair.second);
@@ -291,7 +291,7 @@ namespace GEX
 				aircraft.damage(projectile.getDamage());
 				projectile.destroy();
 
-			}
+			}*/
 		}
 	}
 

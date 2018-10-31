@@ -85,7 +85,6 @@ namespace GEX
 		keyBindings_[sf::Keyboard::Space] = Action::Fire;
 		keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;*/
 		keyBindings_[sf::Keyboard::Space] = Action::Attack;
-		keyBindings_[sf::Keyboard::RShift] = Action::Jump;
 
 		//Set up actionbindings 
 		initializeActions();

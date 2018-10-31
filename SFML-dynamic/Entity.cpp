@@ -71,7 +71,7 @@ namespace GEX
 
 	void Entity::damage(int points)
 	{
-		assert(points > 0);
+		assert(points >= 0);
 		points > hitpoints_ ? this->destroy() : hitpoints_ -= points;
 	}
 

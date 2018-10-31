@@ -93,6 +93,7 @@ namespace GEX
 		while (elapsedTime_ >= timePerFrame && (currentFrame_ < frames_.size() || repeat_))
 		{
 			elapsedTime_ -= timePerFrame;
+			currentFrame_++;
 			if (repeat_)
 			{
 				currentFrame_ %= frames_.size();
