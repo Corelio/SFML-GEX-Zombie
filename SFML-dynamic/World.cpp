@@ -126,27 +126,27 @@ namespace GEX
 			player_->setVelocity(velocity / std::sqrt(2.f));
 		}
 
-		player_->accelerate(0.f, scrollSpeed_);
+		player_->accelerate(sf::Vector2f(0.f, scrollSpeed_));
 	}
 
 	void World::addEnemies()
 	{
-		addEnemy(AircraftType::Raptor, -250.f, 600.f);
-		addEnemy(AircraftType::Raptor, 0.f, 600.f);
-		addEnemy(AircraftType::Raptor, +250.f, 600.f);
+		addEnemy(ActorType::Zombie1, -250.f, 600.f);
+		addEnemy(ActorType::Zombie1, 0.f, 600.f);
+		addEnemy(ActorType::Zombie1, +250.f, 600.f);
 
-		addEnemy(AircraftType::Raptor, -250.f, 900.f);
-		addEnemy(AircraftType::Raptor, 0.f, 900.f);
-		addEnemy(AircraftType::Raptor, +250.f, 900.f);
+		addEnemy(ActorType::Zombie1, -250.f, 900.f);
+		addEnemy(ActorType::Zombie1, 0.f, 900.f);
+		addEnemy(ActorType::Zombie1, +250.f, 900.f);
 
-		addEnemy(AircraftType::Avenger, -70.f, 800.f);
-		addEnemy(AircraftType::Avenger, 70.f, 800.f);
+		addEnemy(ActorType::Zombie2, -70.f, 800.f);
+		addEnemy(ActorType::Zombie2, 70.f, 800.f);
 
-		addEnemy(AircraftType::Avenger, -70.f, 1200.f);
-		addEnemy(AircraftType::Avenger, 70.f, 1200.f);
+		addEnemy(ActorType::Zombie2, -70.f, 1200.f);
+		addEnemy(ActorType::Zombie2, 70.f, 1200.f);
 
-		addEnemy(AircraftType::Avenger, -170.f, 1800.f);
-		addEnemy(AircraftType::Avenger, 170.f, 1800.f);
+		addEnemy(ActorType::Zombie2, -170.f, 1800.f);
+		addEnemy(ActorType::Zombie2, 170.f, 1800.f);
 		
 		//Sort the enemy vector by Y position
 		std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(),
@@ -158,7 +158,7 @@ namespace GEX
 
 	}
 
-	void World::addEnemy(AircraftType type, float relX, float relY)
+	void World::addEnemy(ActorType type, float relX, float relY)
 	{
 		enemySpawnPoints_.push_back(SpawnPoint(type, spawnPosition_.x + relX, spawnPosition_.y - relY));
 	}
@@ -169,7 +169,7 @@ namespace GEX
 		while (!enemySpawnPoints_.empty() && enemySpawnPoints_.back().y > getBattlefieldBounds().top) {
 
 			auto spawnPoint = enemySpawnPoints_.back();
-			std::unique_ptr<Aircraft> enemy(new Aircraft(spawnPoint.type, textures_));
+			std::unique_ptr<Actor> enemy(new Actor(spawnPoint.type, textures_));
 			enemy->setPosition(spawnPoint.x, spawnPoint.y);
 			enemy->setVelocity(0.f, -scrollSpeed_);
 			enemy->rotate(180);
@@ -197,7 +197,7 @@ namespace GEX
 		// Build a list of active Enemies
 		Command enemyCollector;
 		enemyCollector.category = Category::EnemyAircraft;
-		enemyCollector.action = derivedAction<Aircraft>([this](Aircraft& enemy, sf::Time dt)
+		enemyCollector.action = derivedAction<Actor>([this](Actor& enemy, sf::Time dt)
 		{
 			if (!enemy.isDestroyed())
 			{
@@ -215,7 +215,7 @@ namespace GEX
 			}
 
 			float minDistance = std::numeric_limits<float>::max();
-			Aircraft* closestEnemy = nullptr;
+			Actor* closestEnemy = nullptr;
 
 			for (auto* e : activeEnemies_)
 			{
@@ -341,6 +341,11 @@ namespace GEX
 		textures_.load(GEX::TextureID::Particle, "Media/Textures/Particle.png");
 		textures_.load(GEX::TextureID::Explosion, "Media/Textures/Explosion.png");
 		textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
+		textures_.load(GEX::TextureID::Hero2, "Media/Textures/Hero2.png");
+		textures_.load(GEX::TextureID::Zombie1, "Media/Textures/Zombie1.png");
+		textures_.load(GEX::TextureID::Zombie2, "Media/Textures/Zombie2.png");
+		textures_.load(GEX::TextureID::Zombie3, "Media/Textures/Zombie3.png");
+
 	}
 
 	void World::buildScene()
@@ -374,7 +379,7 @@ namespace GEX
 
 		// add player aircraft & game objects
  
-		std::unique_ptr<Aircraft> leader(new Aircraft(AircraftType::Eagle, textures_));
+		std::unique_ptr<Actor> leader(new Actor(ActorType::Hero2, textures_));
 
 		leader->setPosition(spawnPosition_);
 		leader->setVelocity(50.f, scrollSpeed_);

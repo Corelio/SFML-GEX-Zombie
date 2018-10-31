@@ -34,6 +34,8 @@
 #include "Projectile.h"
 #include "Pickup.h"
 #include "Particle.h"
+#include "Animation2.h"
+#include "Actor.h"
 
 namespace GEX
 {
@@ -81,6 +83,19 @@ namespace GEX
 		sf::Color								color;
 		sf::Time								lifetime;
 	};
+
+	struct ActorData
+	{
+		int										hitpoints;
+		int										damageDone;
+		float									speed;
+		TextureID								texture;
+		std::map<Actor::State, Animation2>		animations;
+
+		std::vector<Direction>					directions;
+	};
+
+	std::map<ActorType, ActorData>				initializeActorData();
 
 	std::map<AircraftType, AircraftData>		initializeAircraftData();
 	std::map<Projectile::Type, ProjectileData>	initializeProjectileData();

@@ -50,6 +50,8 @@ namespace GEX
 		EnemyRotateLeft,
 		Fire,
 		LaunchMissile,
+		Attack,
+		Jump,
 	};
 
 	enum class MissionStatus{

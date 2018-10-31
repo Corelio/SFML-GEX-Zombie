@@ -31,6 +31,7 @@
 #include "Aircraft.h"
 #include "Command.h"
 #include <functional>
+#include "Actor.h"
 
 namespace GEX
 {
@@ -39,6 +40,18 @@ namespace GEX
 		AircraftMover(float vx, float vy) : velocity(vx, vy) {}
 
 		void	operator() (Aircraft& aircraft, sf::Time dt) const
+		{
+			aircraft.accelerate(velocity);
+		}
+
+		sf::Vector2f	velocity;
+	};
+
+	struct ActorMover
+	{
+		ActorMover(float vx, float vy) : velocity(vx, vy) {}
+
+		void	operator() (Actor& aircraft, sf::Time dt) const
 		{
 			aircraft.accelerate(velocity);
 		}
@@ -66,11 +79,13 @@ namespace GEX
 		keyBindings_[sf::Keyboard::Right] = Action::MoveRight;
 		keyBindings_[sf::Keyboard::Up] = Action::MoveUp;
 		keyBindings_[sf::Keyboard::Down] = Action::MoveDown;
-		keyBindings_[sf::Keyboard::R] = Action::EnemyRotateRight;
+		/*keyBindings_[sf::Keyboard::R] = Action::EnemyRotateRight;
 		keyBindings_[sf::Keyboard::L] = Action::EnemyRotateLeft;
 
 		keyBindings_[sf::Keyboard::Space] = Action::Fire;
-		keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;
+		keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;*/
+		keyBindings_[sf::Keyboard::Space] = Action::Attack;
+		keyBindings_[sf::Keyboard::RShift] = Action::Jump;
 
 		//Set up actionbindings 
 		initializeActions();
@@ -133,7 +148,7 @@ namespace GEX
 	{
 		const float playerSpeed = 200.f;
 
-		actionBindings_[Action::MoveLeft].action = derivedAction<Aircraft>(AircraftMover(-playerSpeed, 0.f));
+		/*actionBindings_[Action::MoveLeft].action = derivedAction<Aircraft>(AircraftMover(-playerSpeed, 0.f));
 		actionBindings_[Action::MoveRight].action = derivedAction<Aircraft>(AircraftMover(playerSpeed, 0.f));
 		actionBindings_[Action::MoveUp].action = derivedAction<Aircraft>(AircraftMover(0.f, -playerSpeed));
 		actionBindings_[Action::MoveDown].action = derivedAction<Aircraft>(AircraftMover(0.f, playerSpeed));
@@ -148,7 +163,17 @@ namespace GEX
 		actionBindings_[Action::EnemyRotateLeft].category = Category::EnemyAircraft;
 		actionBindings_[Action::EnemyRotateRight].action = derivedAction<Aircraft>(AircraftRotator(1.f));
 		actionBindings_[Action::EnemyRotateRight].category = Category::EnemyAircraft;
-		
+		*/
+		actionBindings_[Action::MoveLeft].action = derivedAction<Actor>(ActorMover(-playerSpeed, 0.f));
+		actionBindings_[Action::MoveRight].action = derivedAction<Actor>(ActorMover(playerSpeed, 0.f));
+		actionBindings_[Action::MoveUp].action = derivedAction<Actor>(ActorMover(0.f, -playerSpeed));
+		actionBindings_[Action::MoveDown].action = derivedAction<Actor>(ActorMover(0.f, playerSpeed));
+		actionBindings_[Action::Attack].action = derivedAction<Actor>([](Actor& node, sf::Time dt) {node.attack(); });
+
+		for (auto& pair : actionBindings_)
+		{
+			pair.second.category = Category::Hero;
+		}
 		
 	}
 }

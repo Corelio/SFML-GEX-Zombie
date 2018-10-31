@@ -52,5 +52,8 @@ int				randomInt(int exclusiveMax);
 float			length(sf::Vector2f vector);
 sf::Vector2f	unitVector(sf::Vector2f vector);
 
+//Rectangle flip left right
+sf::IntRect flip(const sf::IntRect& rec);
+
 
 

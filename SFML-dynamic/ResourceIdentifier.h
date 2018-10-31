@@ -40,7 +40,12 @@ namespace GEX
 		Jungle,
 		Explosion,
 		Particle,
-		FinishLine
+		FinishLine,
+		Hero2,
+		Zombie1,
+		Zombie2,
+		Zombie3,
+		Zombie4,
 	};
 
 	enum class FontID

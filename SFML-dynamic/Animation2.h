@@ -1,6 +1,6 @@
-﻿/**
+/**
 * @file
-* JsonFrameParser.cpp
+* Animation2.h
 * @author
 * Marco Corsini Baccaro 2018
 * @version 1.0
@@ -27,37 +27,45 @@
 * I certify that this work is solely my own and complies with
 * NBCC Academic Integrity Policy (policy 1111)
 */
-#include "JsonFrameParser.h"
-#include <fstream>
-#include <iostream>
+#pragma once
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <vector>
 
-using json = nlohmann::json;
+using Frame = sf::IntRect;
 
-
-JsonFrameParser::JsonFrameParser(std::string path)
+namespace GEX
 {
-	std::ifstream ifs(path);
-	json_ = json::parse(ifs);
-}
-
-std::vector<sf::IntRect>  JsonFrameParser::getFramesFor(std::string animationName) const
-{
-	std::vector<sf::IntRect> data; // frame textRecs for animaionName in atlas
-
-	json k = json_["frames"];
-
-	for (auto i : k)
+	class Animation2
 	{
+	public:
+		//Constructors
+		explicit			Animation2(bool repeat = true);
 
-		std::string tmpStr = i["filename"]; // animation name is the first part of "filename" string
-		if (tmpStr.compare(0, animationName.size(), animationName) == 0)
-		{
-			data.push_back(sf::IntRect(i["frame"]["x"],
-				i["frame"]["y"],
-				i["frame"]["w"],
-				i["frame"]["h"]));
-		}
-	}
+		//Getters and setters
+		void				addFrame(Frame frame);
+		void				addFrameSet(std::vector<Frame> frames);
+		void				setDuration(sf::Time time);
+		sf::Time			getDuration() const;
+		void				setRepeating(bool repeat);
+		bool				isRepeating() const;
 
-	return data;
+		//Methods
+		void				restart();
+		bool				isFinished() const;
+
+		Frame				getCurrentFrame() const;
+
+		Frame				update(sf::Time dt);
+
+	private:
+		std::vector<Frame>	frames_;
+		std::size_t			currentFrame_;
+		sf::Time			duration_;
+		sf::Time			elapsedTime_;
+		bool				repeat_;
+	};
 }
+

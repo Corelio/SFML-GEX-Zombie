@@ -39,6 +39,7 @@
 #include <memory>
 #include <iostream>
 #include "CommandQueue.h"
+#include "Actor.h"
 
 namespace sf  //Forward declaration - This class does not need to know about this class
 {
@@ -67,7 +68,7 @@ namespace GEX
 		void						adaptPlayerVelocity();
 
 		void						addEnemies();
-		void						addEnemy(AircraftType type, float relX, float relY);
+		void						addEnemy(ActorType type, float relX, float relY);
 		void						spawnEmenies();
 
 		sf::FloatRect				getViewBounds() const;
@@ -90,13 +91,13 @@ namespace GEX
 
 		struct SpawnPoint
 		{
-			SpawnPoint(AircraftType _type, float _x, float _y) 
+			SpawnPoint(ActorType _type, float _x, float _y) 
 				: type(_type)
 				, x(_x)
 				, y(_y) 
 			{}
 
-			AircraftType			type;
+			ActorType				type;
 			float					x;
 			float					y;
 		};
@@ -116,16 +117,16 @@ namespace GEX
 		float						scrollSpeed_;
 		int							counter_;
 		int							orientation_;
-		Aircraft*					player_;
-		Aircraft*					leftAircraft_;
-		Aircraft*					rightAircraft_;
+		Actor*						player_;
+		/*Aircraft*					leftAircraft_;
+		Aircraft*					rightAircraft_;*/
 		SpriteNode*					background_;
 
 		CommandQueue				commandQueue_;
 
 		std::vector<SpawnPoint>		enemySpawnPoints_;
 
-		std::vector<Aircraft*>		activeEnemies_;
+		std::vector<Actor*>			activeEnemies_;
 
 	};
 
