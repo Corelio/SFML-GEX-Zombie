@@ -51,8 +51,10 @@ namespace GEX
 		, travelDistance_(0.f)
 		, directionIndex_(0)
 		, attack_(false)
-
-	{
+		, forceField_(false)
+		, forceFieldTimer_(sf::seconds(5.f))
+		, forceFieldElapsedTime_(sf::Time::Zero)
+	{	  
 		for (auto a : TABLE.at(type).animations)
 		{
 			animations_[a.first] = a.second;
@@ -61,6 +63,7 @@ namespace GEX
 		if (Actor::getCategory() == Category::Zombie)
 			state_ = State::Rise;  // zombies spawn in rise state
 
+		sprite_.setTextureRect(sf::IntRect());
 		centerOrigin(sprite_);
 
 		//
@@ -72,8 +75,6 @@ namespace GEX
 
 		updateTexts();
 	}
-
-
 
 	unsigned int Actor::getCategory() const
 	{
@@ -93,23 +94,35 @@ namespace GEX
 
 	void Actor::updateMovementPattern(sf::Time dt)
 	{
-		// movement pattern
-		const std::vector<GEX::Direction> directions = TABLE.at(type_).directions;
-
-		if (!directions.empty())
+		if (!Follows())
 		{
-			if (travelDistance_ > (directions[directionIndex_].distance))
+			// movement pattern
+			const std::vector<GEX::Direction> directions = TABLE.at(type_).directions;
+
+			if (!directions.empty())
 			{
-				directionIndex_ = (++directionIndex_) % directions.size();
-				travelDistance_ = 0;
+				if (travelDistance_ > (directions[directionIndex_].distance))
+				{
+					directionIndex_ = (++directionIndex_) % directions.size();
+					travelDistance_ = 0;
+				}
+
+				float radians = toRadian(directions[directionIndex_].angle + 90.f);
+				float vx = getMaxSpeed() * std::cos(radians);
+				float vy = getMaxSpeed() * std::sin(radians);
+
+				setVelocity(vx, vy);
+				travelDistance_ += getMaxSpeed() * dt.asSeconds();
 			}
+		}
+		else {
+			const float APPROACH_RATE = 400.f;
 
-			float radians = toRadian(directions[directionIndex_].angle + 90.f);
-			float vx = getMaxSpeed() * std::cos(radians);
-			float vy = getMaxSpeed() * std::sin(radians);
+			auto newVelocity = unitVector(APPROACH_RATE * dt.asSeconds() * targetDirection_ + getVelocity());
 
-			setVelocity(vx, vy);
-			travelDistance_ += getMaxSpeed() * dt.asSeconds();
+			newVelocity *= getMaxSpeed();
+
+			setVelocity(newVelocity);
 		}
 	}
 
@@ -162,6 +175,30 @@ namespace GEX
 			return 0;
 	}
 
+	bool Actor::Follows() const
+	{
+		return TABLE.at(type_).follows;
+	}
+
+	void Actor::guidedTowards(sf::Vector2f position)
+	{
+		targetDirection_ = unitVector(position - getWorldPosition());
+	}
+
+	bool Actor::hasForceField() const
+	{
+		return TABLE.at(type_).forcefield;
+	}
+
+	bool Actor::isForceFieldActive() const
+	{
+		return forceField_;
+	}
+
+	void Actor::activateForceField()
+	{
+		forceField_ = true;
+	}
 
 	void Actor::updateStates()
 	{
@@ -204,11 +241,13 @@ namespace GEX
 		sprite_.setTextureRect(rec);
 		centerOrigin(sprite_);
 
-		if (state_ != State::Dead) // dont move it while dying
+		if (state_ != State::Dead) {// dont move it while dying
 			Entity::updateCurrent(dt, commands);
+			updateMovementPattern(dt);
+		}
 
-		updateMovementPattern(dt);
 		updateTexts();
+
 	}
 
 	void Actor::drawCurrent(sf::RenderTarget & target, sf::RenderStates states) const
@@ -225,6 +264,6 @@ namespace GEX
 
 	bool Actor::isMarkedForRemoval() const
 	{
-		return isDestroyed() && animations_[state_].isFinished();
+		return state_ == State::Dead && animations_[state_].isFinished(); //isDestroyed() && animations_[state_].isFinished();
 	}
 }

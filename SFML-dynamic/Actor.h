@@ -59,6 +59,11 @@ namespace GEX
 		void							attack();
 		void							setState(State state);
 		int								attackPoints() const;
+		bool							Follows() const;
+		void							guidedTowards(sf::Vector2f position);
+		bool							hasForceField() const;
+		bool							isForceFieldActive() const;
+		void							activateForceField();
 
 	private:
 		void							updateStates();
@@ -80,6 +85,10 @@ namespace GEX
 		std::size_t						directionIndex_;
 
 		bool							attack_;
+		sf::Vector2f					targetDirection_;
+		bool							forceField_;
+		sf::Time						forceFieldTimer_;
+		sf::Time						forceFieldElapsedTime_;
 	};
 }
 

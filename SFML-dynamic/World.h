@@ -75,6 +75,7 @@ namespace GEX
 		sf::FloatRect				getBattlefieldBounds() const;
 
 		void						guideMissiles();
+		void						followHero();
 
 		void						handleCollision();
 

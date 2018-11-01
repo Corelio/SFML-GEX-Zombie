@@ -138,8 +138,10 @@ namespace GEX
 
 		data[ActorType::Hero2].texture = TextureID::Hero2;
 		data[ActorType::Hero2].hitpoints = 100;
-		data[ActorType::Hero2].damageDone = 5;
+		data[ActorType::Hero2].damageDone = 10;
 		data[ActorType::Hero2].speed = 50;
+		data[ActorType::Hero2].follows = false;
+		data[ActorType::Hero2].forcefield = true;
 
 		JsonFrameParser frames = JsonFrameParser("Media/Textures/hero2.json");
 
@@ -172,6 +174,8 @@ namespace GEX
 		data[ActorType::Zombie1].hitpoints = 100;
 		data[ActorType::Zombie1].damageDone = 1;
 		data[ActorType::Zombie1].speed = 50;
+		data[ActorType::Zombie1].follows = true;
+		data[ActorType::Zombie1].forcefield = false;
 
 		frames = JsonFrameParser("Media/Textures/zombie1.json");
 
@@ -201,6 +205,8 @@ namespace GEX
 		data[ActorType::Zombie2].hitpoints = 100;
 		data[ActorType::Zombie2].damageDone = 1;
 		data[ActorType::Zombie2].speed = 50;
+		data[ActorType::Zombie2].follows = false;
+		data[ActorType::Zombie2].forcefield = false;
 
 		frames = JsonFrameParser("Media/Textures/zombie2.json");
 
@@ -232,6 +238,8 @@ namespace GEX
 		data[ActorType::Zombie3].hitpoints = 100;
 		data[ActorType::Zombie3].damageDone = 1;
 		data[ActorType::Zombie3].speed = 50;
+		data[ActorType::Zombie3].follows = true;
+		data[ActorType::Zombie3].forcefield = false;
 		frames = JsonFrameParser("Media/Textures/zombie3.json");
 
 		data[ActorType::Zombie3].animations[Actor::State::Idle].addFrameSet(frames.getFramesFor("idle"));

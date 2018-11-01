@@ -89,6 +89,8 @@ namespace GEX
 		int										hitpoints;
 		int										damageDone;
 		float									speed;
+		bool									follows;
+		bool									forcefield;
 		TextureID								texture;
 		std::map<Actor::State, Animation2>		animations;
 

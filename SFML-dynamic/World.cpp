@@ -70,8 +70,8 @@ namespace GEX
 		//Remove entities that are out of view
 		destroyEntitiesOutOfView();
 
-		//Process guided missile
-		//guideMissiles();
+		//Zombies following
+		followHero();
 
 		// run all commands in the command queue
 		while (!commandQueue_.isEmpty())
@@ -123,18 +123,18 @@ namespace GEX
 		addEnemy(ActorType::Zombie1, 0.f, 600.f);
 		addEnemy(ActorType::Zombie1, +250.f, 600.f);
 
-		addEnemy(ActorType::Zombie1, -250.f, 1900.f);
-		addEnemy(ActorType::Zombie1, 0.f, 1900.f);
-		addEnemy(ActorType::Zombie1, +250.f, 1900.f);
+		addEnemy(ActorType::Zombie1, -250.f, 1200.f);
+		addEnemy(ActorType::Zombie1, 0.f, 1200.f);
+		addEnemy(ActorType::Zombie1, +250.f, 1200.f);
 
-		addEnemy(ActorType::Zombie2, -70.f, 2800.f);
-		addEnemy(ActorType::Zombie2, 70.f, 2800.f);
+		addEnemy(ActorType::Zombie2, -70.f, 1800.f);
+		addEnemy(ActorType::Zombie2, 70.f, 1800.f);
 
-		addEnemy(ActorType::Zombie2, -70.f, 3200.f);
-		addEnemy(ActorType::Zombie2, 70.f, 3200.f);
+		addEnemy(ActorType::Zombie2, -70.f, 2400.f);
+		addEnemy(ActorType::Zombie2, 70.f, 2400.f);
 
-		addEnemy(ActorType::Zombie2, -170.f, 4800.f);
-		addEnemy(ActorType::Zombie2, 170.f, 4800.f);
+		addEnemy(ActorType::Zombie2, -170.f, 3000.f);
+		addEnemy(ActorType::Zombie2, 170.f, 3000.f);
 		
 		//Sort the enemy vector by Y position
 		std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(),
@@ -160,7 +160,6 @@ namespace GEX
 			std::unique_ptr<Actor> enemy(new Actor(spawnPoint.type, textures_));
 			enemy->setPosition(spawnPoint.x, spawnPoint.y);
 			enemy->setVelocity(0.f, -scrollSpeed_);
-			//enemy->rotate(180);
 			sceneLayers_[UpperAir]->attachChild(std::move(enemy));
 			enemySpawnPoints_.pop_back();
 
@@ -175,56 +174,27 @@ namespace GEX
 	sf::FloatRect World::getBattlefieldBounds() const
 	{
 		sf::FloatRect bounds = getViewBounds();
-		bounds.top -= 100.f;
+		bounds.top += 100.f;
 		bounds.height += 100.f;
 		return bounds;
 	}
 
-	void World::guideMissiles()
+	void World::followHero()
 	{
-		// Build a list of active Enemies
-		Command enemyCollector;
-		enemyCollector.category = Category::EnemyAircraft;
-		enemyCollector.action = derivedAction<Actor>([this](Actor& enemy, sf::Time dt)
+		Command followHero;
+		followHero.category = Category::Zombie;
+		followHero.action = derivedAction<Actor>([this](Actor& zombie, sf::Time dt)
 		{
-			if (!enemy.isDestroyed())
-			{
-				activeEnemies_.push_back(&enemy);
-			}
-		});
-
-		Command missileGuider;
-		missileGuider.category = Category::AlliedProjectile;
-		missileGuider.action = derivedAction<Projectile>([this](Projectile& missile, sf::Time dt)
-		{
-			if (!missile.isGuided())  //ignore bullets
+			if (!zombie.Follows())  //ignore not following zombies
 			{
 				return;
 			}
 
-			float minDistance = std::numeric_limits<float>::max();
-			Actor* closestEnemy = nullptr;
-
-			for (auto* e : activeEnemies_)
-			{
-				auto d = distance(missile, *e);
-				if (d < minDistance)
-				{
-					minDistance = d;
-					closestEnemy = e;
-				}
-			}
-
-			if (closestEnemy)
-			{
-				missile.guidedTowards(closestEnemy->getWorldPosition());
-			}
+			zombie.guidedTowards(player_->getWorldPosition());
 
 		});
 
-		commandQueue_.push(enemyCollector);
-		commandQueue_.push(missileGuider);
-		activeEnemies_.clear();
+		commandQueue_.push(followHero);
 	}
 
 	bool matchesCategories(SceneNode::Pair& colliders, Category::Type type1, Category::Type type2)
@@ -258,28 +228,28 @@ namespace GEX
 		{
 			if (matchesCategories(collindingPair, Category::Type::Hero, Category::Type::Zombie))
 			{
-				auto& player = static_cast<Actor&>(*collindingPair.first);
-				auto& enemy	 = static_cast<Actor&>(*collindingPair.second);
-				player.damage(enemy.attackPoints());
-				enemy.damage(player.attackPoints());
+				auto& hero	 = static_cast<Actor&>(*collindingPair.first);
+				auto& zombie = static_cast<Actor&>(*collindingPair.second);
+				hero.damage(zombie.attackPoints());
+				zombie.damage(hero.attackPoints());
+
+				auto zpos = zombie.getPosition();
+				auto hpos = hero.getPosition();
+				auto diffPos = zpos - hpos;
+				zombie.setPosition(zpos + 0.2f * diffPos);
+				hero.setPosition(hpos - 0.1f * diffPos);
 			}
-			/*else if (matchesCategories(collindingPair, Category::Type::PlayerAircraft, Category::Type::Pickup))
+			else if (matchesCategories(collindingPair, Category::Type::Zombie, Category::Type::Zombie))
 			{
-				auto& player = static_cast<Aircraft&>(*collindingPair.first);
-				auto& pickup = static_cast<Pickup&>(*collindingPair.second);
+				auto& zombie1 = static_cast<Actor&>(*collindingPair.first);
+				auto& zombie2 = static_cast<Actor&>(*collindingPair.second);
 
-				pickup.apply(player);
-				pickup.destroy();
+				auto z1pos = zombie1.getPosition();
+				auto z2pos = zombie2.getPosition();
+				auto diffPos = z1pos - z2pos;
+				zombie1.setPosition(z1pos + 0.2f * diffPos);
+				zombie2.setPosition(z2pos - 0.1f * diffPos);
 			}
-			else if (matchesCategories(collindingPair, Category::Type::PlayerAircraft, Category::Type::EnemyProjectile) || matchesCategories(collindingPair, Category::EnemyAircraft, Category::AlliedProjectile))
-			{
-  				auto& aircraft   = static_cast<Aircraft&>(*collindingPair.first);
-				auto& projectile = static_cast<Projectile&>(*collindingPair.second);
-
-				aircraft.damage(projectile.getDamage());
-				projectile.destroy();
-
-			}*/
 		}
 	}
 
