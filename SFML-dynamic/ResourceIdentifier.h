@@ -38,6 +38,7 @@ namespace GEX
 		Face,
 		Entities,
 		Jungle,
+		Road,
 		Explosion,
 		Particle,
 		FinishLine,

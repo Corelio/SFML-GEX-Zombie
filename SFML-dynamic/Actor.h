@@ -66,12 +66,13 @@ namespace GEX
 		void							drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 		void							updateMovementPattern(sf::Time dt);
 		void							updateTexts();
+		bool							isMarkedForRemoval() const override;
 
 	private:
 		ActorType						type_;
 		State							state_;
 		mutable sf::Sprite				sprite_;
-		std::map<State, Animation2>		animations_;
+		mutable std::map<State, Animation2>		animations_;
 		Direction						direction_;
 		TextNode*						healthDisplay_;
 

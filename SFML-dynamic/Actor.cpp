@@ -180,6 +180,10 @@ namespace GEX
 
 		if (state_ == State::Idle && length(getVelocity()) > 0.1f)
 			state_ = State::Walk;
+
+		if (isDestroyed()) {
+			state_ = State::Dead;
+		}
 	}
 
 	void Actor::updateCurrent(sf::Time dt, GEX::CommandQueue & commands)
@@ -217,5 +221,10 @@ namespace GEX
 		healthDisplay_->setText(std::to_string(getHitpoints()) + "HP");
 		healthDisplay_->setPosition(0.f, 70.f);
 		healthDisplay_->setRotation(-getRotation());
+	}
+
+	bool Actor::isMarkedForRemoval() const
+	{
+		return isDestroyed() && animations_[state_].isFinished();
 	}
 }

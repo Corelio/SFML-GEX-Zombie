@@ -44,7 +44,7 @@ namespace GEX
 		, sceneLayers_()
 		, worldBounds_(0.f, 0.f, worldView_.getSize().x, 5000.f)
 		, spawnPosition_(worldView_.getSize().x/2.f, worldBounds_.height - (worldView_.getSize().y / 2.f))
-		, scrollSpeed_(-150.f)
+		, scrollSpeed_(-50.f)
 		, counter_(1)
 		, orientation_(1)
 		, commandQueue_()
@@ -60,17 +60,7 @@ namespace GEX
 
 	void World::update(sf::Time dt, CommandQueue& commands)
 	{
-		// For fun!! Replacing the background when it world bounds ends
-		/*if (worldView_.getCenter().y - (worldView_.getSize().y / 2 - 50) < 50)
-		{
-			worldView_.setCenter(spawnPosition_);
-			player_->setPosition(player_->getPosition().x, player_->getPosition().y + worldBounds_.height - (worldView_.getSize().y));
-			// background
-			sf::Texture&		texture = textures_.get(TextureID::Space);
-			sf::IntRect			textureRect(worldBounds_);
-			texture.setRepeated(true);
-			background_->setSprite(texture, textureRect);
-		}*/
+
 		// scroll the world
 		worldView_.move(0.f, scrollSpeed_*dt.asSeconds());
 
@@ -81,7 +71,7 @@ namespace GEX
 		destroyEntitiesOutOfView();
 
 		//Process guided missile
-		guideMissiles();
+		//guideMissiles();
 
 		// run all commands in the command queue
 		while (!commandQueue_.isEmpty())
@@ -95,8 +85,8 @@ namespace GEX
 		//remove all wrecks from the scene graph
 		sceneGraph_.removeWrecks();
 
-		adaptPlayerVelocity();
 		sceneGraph_.update(dt, commands);
+		adaptPlayerVelocity();
 		adaptPlayerPosition();
 
 		//check if there are any enemy inside of the battlefield and spawn it
@@ -125,8 +115,6 @@ namespace GEX
 		{
 			player_->setVelocity(velocity / std::sqrt(2.f));
 		}
-
-		player_->accelerate(sf::Vector2f(0.f, scrollSpeed_));
 	}
 
 	void World::addEnemies()
@@ -135,18 +123,18 @@ namespace GEX
 		addEnemy(ActorType::Zombie1, 0.f, 600.f);
 		addEnemy(ActorType::Zombie1, +250.f, 600.f);
 
-		addEnemy(ActorType::Zombie1, -250.f, 900.f);
-		addEnemy(ActorType::Zombie1, 0.f, 900.f);
-		addEnemy(ActorType::Zombie1, +250.f, 900.f);
+		addEnemy(ActorType::Zombie1, -250.f, 1900.f);
+		addEnemy(ActorType::Zombie1, 0.f, 1900.f);
+		addEnemy(ActorType::Zombie1, +250.f, 1900.f);
 
-		addEnemy(ActorType::Zombie2, -70.f, 800.f);
-		addEnemy(ActorType::Zombie2, 70.f, 800.f);
+		addEnemy(ActorType::Zombie2, -70.f, 2800.f);
+		addEnemy(ActorType::Zombie2, 70.f, 2800.f);
 
-		addEnemy(ActorType::Zombie2, -70.f, 1200.f);
-		addEnemy(ActorType::Zombie2, 70.f, 1200.f);
+		addEnemy(ActorType::Zombie2, -70.f, 3200.f);
+		addEnemy(ActorType::Zombie2, 70.f, 3200.f);
 
-		addEnemy(ActorType::Zombie2, -170.f, 1800.f);
-		addEnemy(ActorType::Zombie2, 170.f, 1800.f);
+		addEnemy(ActorType::Zombie2, -170.f, 4800.f);
+		addEnemy(ActorType::Zombie2, 170.f, 4800.f);
 		
 		//Sort the enemy vector by Y position
 		std::sort(enemySpawnPoints_.begin(), enemySpawnPoints_.end(),
@@ -338,6 +326,7 @@ namespace GEX
 		textures_.load(GEX::TextureID::Landscape, "Media/Textures/Desert.png");
 		textures_.load(GEX::TextureID::Space, "Media/Textures/Space.png");
 		textures_.load(GEX::TextureID::Jungle, "Media/Textures/JungleBig.png");
+		textures_.load(GEX::TextureID::Road, "Media/Textures/Road.png");
 		textures_.load(GEX::TextureID::Particle, "Media/Textures/Particle.png");
 		textures_.load(GEX::TextureID::Explosion, "Media/Textures/Explosion.png");
 		textures_.load(GEX::TextureID::FinishLine, "Media/Textures/FinishLine.png");
@@ -367,7 +356,7 @@ namespace GEX
 		sceneLayers_[LowerAir]->attachChild(std::move(fire));
 
 		// background
-		sf::Texture&		texture = textures_.get(TextureID::Jungle);
+		sf::Texture&		texture = textures_.get(TextureID::Road);
 		sf::IntRect			textureRect(worldBounds_);
 		texture.setRepeated(true);
 
