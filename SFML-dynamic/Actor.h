@@ -51,44 +51,51 @@ namespace GEX
 		Actor(ActorType type, const GEX::TextureManager& textures);
 		~Actor() = default;
 
-		unsigned int					getCategory() const override;
-		sf::FloatRect					getBoundingBox() const override;
-		float							getMaxSpeed() const;
-		void							accelerate(sf::Vector2f velocity) override;
+		unsigned int							getCategory() const override;
+		sf::FloatRect							getBoundingBox() const override;
+		float									getMaxSpeed() const;
+		void									accelerate(sf::Vector2f velocity) override;
 
-		void							attack();
-		void							setState(State state);
-		int								attackPoints() const;
-		bool							Follows() const;
-		void							guidedTowards(sf::Vector2f position);
-		bool							hasForceField() const;
-		bool							isForceFieldActive() const;
-		void							activateForceField();
-
-	private:
-		void							updateStates();
-		void							updateCurrent(sf::Time dt, CommandQueue& commands) override;
-		void							drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
-		void							updateMovementPattern(sf::Time dt);
-		void							updateTexts();
-		bool							isMarkedForRemoval() const override;
+		void									attack();
+		void									setState(State state);
+		int										attackPoints() const;
+		bool									Follows() const;
+		void									guidedTowards(sf::Vector2f position);
+		bool									hasForceField() const;
+		bool									isForceFieldActive() const;
+		void									activateForceField();
+		bool									hasGodMode() const;
+		bool									isGodModeActive() const;
+		void									activateGodMode();
 
 	private:
-		ActorType						type_;
-		State							state_;
-		mutable sf::Sprite				sprite_;
+		void									updateStates();
+		void									updateCurrent(sf::Time dt, CommandQueue& commands) override;
+		void									drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
+		void									updateMovementPattern(sf::Time dt);
+		void									updateTexts();
+		bool									isMarkedForRemoval() const override;
+		void									updateGodMode(sf::Time dt);
+
+	private:
+		ActorType								type_;
+		State									state_;
+		mutable sf::Sprite						sprite_;
 		mutable std::map<State, Animation2>		animations_;
-		Direction						direction_;
-		TextNode*						healthDisplay_;
+		Direction								direction_;
+		TextNode*								healthDisplay_;
 
-		float							travelDistance_;
-		std::size_t						directionIndex_;
+		float									travelDistance_;
+		std::size_t								directionIndex_;
 
-		bool							attack_;
-		sf::Vector2f					targetDirection_;
-		bool							forceField_;
-		sf::Time						forceFieldTimer_;
-		sf::Time						forceFieldElapsedTime_;
+		bool									attack_;
+		sf::Vector2f							targetDirection_;
+		bool									forceField_;
+		bool									godMode_;
+		bool									godModeFlicker_;
+		sf::Time								godModeTime_;
+		sf::Time								godModeElapsedTime_;
+
 	};
 }
 

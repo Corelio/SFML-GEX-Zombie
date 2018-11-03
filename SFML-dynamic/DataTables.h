@@ -91,6 +91,8 @@ namespace GEX
 		float									speed;
 		bool									follows;
 		bool									forcefield;
+		bool									godMode;
+		sf::Time								godModeTime;
 		TextureID								texture;
 		std::map<Actor::State, Animation2>		animations;
 

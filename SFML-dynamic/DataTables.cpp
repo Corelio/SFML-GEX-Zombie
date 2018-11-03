@@ -142,6 +142,8 @@ namespace GEX
 		data[ActorType::Hero2].speed = 50;
 		data[ActorType::Hero2].follows = false;
 		data[ActorType::Hero2].forcefield = true;
+		data[ActorType::Hero2].godMode = true;
+		data[ActorType::Hero2].godModeTime = sf::seconds(5.f);
 
 		JsonFrameParser frames = JsonFrameParser("Media/Textures/hero2.json");
 
@@ -176,6 +178,8 @@ namespace GEX
 		data[ActorType::Zombie1].speed = 50;
 		data[ActorType::Zombie1].follows = true;
 		data[ActorType::Zombie1].forcefield = false;
+		data[ActorType::Zombie1].godMode = false;
+		data[ActorType::Zombie1].godModeTime = sf::Time::Zero;
 
 		frames = JsonFrameParser("Media/Textures/zombie1.json");
 
@@ -207,6 +211,8 @@ namespace GEX
 		data[ActorType::Zombie2].speed = 50;
 		data[ActorType::Zombie2].follows = false;
 		data[ActorType::Zombie2].forcefield = false;
+		data[ActorType::Zombie2].godMode = false;
+		data[ActorType::Zombie2].godModeTime = sf::Time::Zero;
 
 		frames = JsonFrameParser("Media/Textures/zombie2.json");
 
@@ -240,6 +246,8 @@ namespace GEX
 		data[ActorType::Zombie3].speed = 50;
 		data[ActorType::Zombie3].follows = true;
 		data[ActorType::Zombie3].forcefield = false;
+		data[ActorType::Zombie3].godMode = false;
+		data[ActorType::Zombie3].godModeTime = sf::Time::Zero;
 		frames = JsonFrameParser("Media/Textures/zombie3.json");
 
 		data[ActorType::Zombie3].animations[Actor::State::Idle].addFrameSet(frames.getFramesFor("idle"));

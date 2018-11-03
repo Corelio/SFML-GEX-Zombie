@@ -230,7 +230,10 @@ namespace GEX
 			{
 				auto& hero	 = static_cast<Actor&>(*collindingPair.first);
 				auto& zombie = static_cast<Actor&>(*collindingPair.second);
-				hero.damage(zombie.attackPoints());
+				if (!hero.isGodModeActive())
+				{
+					hero.damage(zombie.attackPoints());
+				}
 				zombie.damage(hero.attackPoints());
 
 				auto zpos = zombie.getPosition();

@@ -52,6 +52,7 @@ namespace GEX
 		LaunchMissile,
 		Attack,
 		Jump,
+		God,
 	};
 
 	enum class MissionStatus{

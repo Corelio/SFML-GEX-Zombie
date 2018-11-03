@@ -52,8 +52,9 @@ namespace GEX
 		, directionIndex_(0)
 		, attack_(false)
 		, forceField_(false)
-		, forceFieldTimer_(sf::seconds(5.f))
-		, forceFieldElapsedTime_(sf::Time::Zero)
+		, godMode_(false)
+		, godModeTime_(TABLE.at(type).godModeTime)
+		, godModeFlicker_(true)
 	{	  
 		for (auto a : TABLE.at(type).animations)
 		{
@@ -192,12 +193,33 @@ namespace GEX
 
 	bool Actor::isForceFieldActive() const
 	{
-		return forceField_;
+		return hasForceField() && forceField_;
 	}
 
 	void Actor::activateForceField()
 	{
-		forceField_ = true;
+		if (hasForceField())
+		{
+			forceField_ = true;
+		}
+	}
+
+	bool Actor::hasGodMode() const
+	{
+		return TABLE.at(type_).godMode;
+	}
+
+	bool Actor::isGodModeActive() const
+	{
+		return hasGodMode() && godMode_;
+	}
+
+	void Actor::activateGodMode()
+	{
+		if (hasGodMode())
+		{
+			godMode_ = true;
+		}
 	}
 
 	void Actor::updateStates()
@@ -239,6 +261,22 @@ namespace GEX
 			rec = flip(rec);
 
 		sprite_.setTextureRect(rec);
+		if (isGodModeActive()) {
+			updateGodMode(dt);
+			if (godModeFlicker_)
+			{
+				sprite_.setColor(sf::Color::Red);
+			}
+			else
+			{
+				sprite_.setColor(sf::Color::White);
+			}
+			godModeFlicker_ = !godModeFlicker_;
+			
+		}
+		else {
+			sprite_.setColor(sf::Color::White);
+		}
 		centerOrigin(sprite_);
 
 		if (state_ != State::Dead) {// dont move it while dying
@@ -265,5 +303,16 @@ namespace GEX
 	bool Actor::isMarkedForRemoval() const
 	{
 		return state_ == State::Dead && animations_[state_].isFinished(); //isDestroyed() && animations_[state_].isFinished();
+	}
+
+	void Actor::updateGodMode(sf::Time dt)
+	{
+		if (godModeElapsedTime_ > godModeTime_) {
+			godMode_ = false;
+			godModeElapsedTime_ = sf::Time::Zero;
+			return;
+		}
+
+		godModeElapsedTime_ += dt;
 	}
 }

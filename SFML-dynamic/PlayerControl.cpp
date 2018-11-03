@@ -85,6 +85,7 @@ namespace GEX
 		keyBindings_[sf::Keyboard::Space] = Action::Fire;
 		keyBindings_[sf::Keyboard::M] = Action::LaunchMissile;*/
 		keyBindings_[sf::Keyboard::Space] = Action::Attack;
+		keyBindings_[sf::Keyboard::A] = Action::God;
 
 		//Set up actionbindings 
 		initializeActions();
@@ -168,6 +169,7 @@ namespace GEX
 		actionBindings_[Action::MoveUp].action = derivedAction<Actor>(ActorMover(0.f, -playerSpeed));
 		actionBindings_[Action::MoveDown].action = derivedAction<Actor>(ActorMover(0.f, playerSpeed));
 		actionBindings_[Action::Attack].action = derivedAction<Actor>([](Actor& node, sf::Time dt) {node.attack(); });
+		actionBindings_[Action::God].action = derivedAction<Actor>([](Actor& node, sf::Time dt) {node.activateGodMode(); });
 
 		for (auto& pair : actionBindings_)
 		{
