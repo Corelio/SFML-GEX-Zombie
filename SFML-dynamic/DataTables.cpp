@@ -274,5 +274,16 @@ namespace GEX
 		return data;
 	}
 
+	std::map<ForceField::Type, ForceFieldData> initializeForceFieldData()
+	{
+		std::map<ForceField::Type, ForceFieldData> data;
+
+		data[ForceField::Type::Bubble].texture = TextureID::ForceField;
+		data[ForceField::Type::Bubble].textureRect = sf::IntRect(0, 0, 257, 262);
+		data[ForceField::Type::Bubble].protectionTime = sf::seconds(5);
+
+
+		return data;
+	}
 
 }

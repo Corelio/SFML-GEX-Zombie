@@ -34,6 +34,7 @@
 #include "Utility.h"
 #include "DataTables.h"
 #include "TextNode.h"
+#include <memory>
 
 namespace GEX
 {
@@ -45,6 +46,7 @@ namespace GEX
 	Actor::Actor(ActorType type, const GEX::TextureManager& textures)
 		: Entity(100)
 		, type_(type)
+		, textures_(textures)
 		, state_(State::Walk)
 		, sprite_(textures.get(TABLE.at(type).texture))
 		, direction_(Direction::Right)
@@ -55,6 +57,7 @@ namespace GEX
 		, godMode_(false)
 		, godModeTime_(TABLE.at(type).godModeTime)
 		, godModeFlicker_(true)
+		, theForceField_(nullptr)
 	{	  
 		for (auto a : TABLE.at(type).animations)
 		{
@@ -279,6 +282,13 @@ namespace GEX
 		}
 		centerOrigin(sprite_);
 
+		if (isForceFieldActive())
+		{
+			startForceField();
+		}
+
+		checkForceField();
+
 		if (state_ != State::Dead) {// dont move it while dying
 			Entity::updateCurrent(dt, commands);
 			updateMovementPattern(dt);
@@ -314,5 +324,27 @@ namespace GEX
 		}
 
 		godModeElapsedTime_ += dt;
+	}
+
+	void Actor::startForceField()
+	{
+		if(theForceField_ == nullptr)
+		{
+			std::unique_ptr<ForceField> ff(new ForceField(ForceField::Type::Bubble, textures_));
+			theForceField_ = ff.get();
+			this->attachChild(std::move(ff));
+		}
+	}
+	void Actor::checkForceField()
+	{
+		if (theForceField_ != nullptr)
+		{
+			if (theForceField_->getElapsedTime() > theForceField_->getProtectionTime())
+			{
+				theForceField_->destroy();
+				theForceField_ = nullptr;
+				forceField_ = false;
+			}
+		}
 	}
 }

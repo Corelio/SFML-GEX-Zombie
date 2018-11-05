@@ -36,6 +36,7 @@
 #include "Particle.h"
 #include "Animation2.h"
 #include "Actor.h"
+#include "ForceField.h"
 
 namespace GEX
 {
@@ -99,10 +100,18 @@ namespace GEX
 		std::vector<Direction>					directions;
 	};
 
+	struct ForceFieldData
+	{
+		TextureID								texture;
+		sf::IntRect								textureRect;
+		sf::Time								protectionTime;
+	};
+
 	std::map<ActorType, ActorData>				initializeActorData();
 
 	std::map<AircraftType, AircraftData>		initializeAircraftData();
 	std::map<Projectile::Type, ProjectileData>	initializeProjectileData();
 	std::map<Pickup::Type, PickupData>			initializePickupData();
 	std::map<Particle::Type, ParticleData>		initializeParticleData();
+	std::map<ForceField::Type, ForceFieldData>	initializeForceFieldData();
 }

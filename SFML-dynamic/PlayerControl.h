@@ -53,6 +53,7 @@ namespace GEX
 		Attack,
 		Jump,
 		God,
+		ForceField,
 	};
 
 	enum class MissionStatus{

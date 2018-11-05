@@ -33,6 +33,7 @@
 #include "TextureManager.h"
 #include "Command.h"
 #include "Animation2.h"
+#include "ForceField.h"
 
 namespace GEX
 {
@@ -76,6 +77,8 @@ namespace GEX
 		void									updateTexts();
 		bool									isMarkedForRemoval() const override;
 		void									updateGodMode(sf::Time dt);
+		void									startForceField();
+		void									checkForceField();
 
 	private:
 		ActorType								type_;
@@ -84,6 +87,7 @@ namespace GEX
 		mutable std::map<State, Animation2>		animations_;
 		Direction								direction_;
 		TextNode*								healthDisplay_;
+		const TextureManager&					textures_;
 
 		float									travelDistance_;
 		std::size_t								directionIndex_;
@@ -95,6 +99,7 @@ namespace GEX
 		bool									godModeFlicker_;
 		sf::Time								godModeTime_;
 		sf::Time								godModeElapsedTime_;
+		ForceField*								theForceField_;
 
 	};
 }

@@ -47,6 +47,7 @@ namespace GEX
 		Zombie2,
 		Zombie3,
 		Zombie4,
+		ForceField,
 	};
 
 	enum class FontID

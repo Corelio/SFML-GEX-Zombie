@@ -230,7 +230,7 @@ namespace GEX
 			{
 				auto& hero	 = static_cast<Actor&>(*collindingPair.first);
 				auto& zombie = static_cast<Actor&>(*collindingPair.second);
-				if (!hero.isGodModeActive())
+				if (!hero.isGodModeActive() && !hero.isForceFieldActive())
 				{
 					hero.damage(zombie.attackPoints());
 				}
@@ -252,6 +252,28 @@ namespace GEX
 				auto diffPos = z1pos - z2pos;
 				zombie1.setPosition(z1pos + 0.2f * diffPos);
 				zombie2.setPosition(z2pos - 0.1f * diffPos);
+			}
+			else if (matchesCategories(collindingPair, Category::Type::ForceField, Category::Type::Zombie))
+			{
+				auto& forceField	= static_cast<ForceField&>(*collindingPair.first);
+				auto& zombie		= static_cast<Actor&>(*collindingPair.second);
+
+				auto ffpos = forceField.getPosition();
+				auto zpos = zombie.getPosition();
+				auto zvel = zombie.getVelocity();
+				auto diffPos = ffpos - zpos;
+				float push = 0.001f;
+				if(zvel.x <= 0)
+					zpos.x -= push * diffPos.x;
+				else
+					zpos.x += push * diffPos.x;
+
+				if (zvel.y <= 0)
+					zpos.y -= push * diffPos.y;
+				else
+					zpos.y += push * diffPos.y;
+
+				zombie.setPosition(zpos);
 			}
 		}
 	}
@@ -307,6 +329,7 @@ namespace GEX
 		textures_.load(GEX::TextureID::Zombie1, "Media/Textures/Zombie1.png");
 		textures_.load(GEX::TextureID::Zombie2, "Media/Textures/Zombie2.png");
 		textures_.load(GEX::TextureID::Zombie3, "Media/Textures/Zombie3.png");
+		textures_.load(GEX::TextureID::ForceField, "Media/Textures/ForceField.png");
 
 	}
 
